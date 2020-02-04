@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Triangle Editor</title>
+        
+        <style>
+   
+            iframe{
+                position: fixed;
+            }
+
+            
+            
+        </style>
+    </head>
+    
+    <body>
+     
+        <iframe id='frame' src='./editor.html'></iframe>
+        
+        
+        <script>
+            
+            window.addEventListener('resize', resizer);
+            
+            var el = document.getElementById('frame');
+            
+            var elState = 1; // 1 = max width, 2 = maxheight
+            
+            function resizer(){
+                if (window.innerWidth < window.innerHeight){
+                    el.style.width = "calc(100vw - 20px)";
+                    el.style.height = "calc(100vw - 20px)";
+                    elState = 1;
+                
+                }
+                else{
+                    el.style.width = "calc(100vh - 20px)";
+                    el.style.height = "calc(100vh - 20px)";
+                    elState = 2;
+                }   
+                
+                center();
+            }
+            
+            function center(){
+                // max width
+                if (elState == 1){
+                    el.style.top = 'calc(50vh - ' + (el.clientHeight/2) + "px)";
+                    el.style.left = "";
+                }
+                // max height
+                if (elState == 2){
+                    el.style.left = 'calc(50vw - ' + (el.clientWidth/2) + "px)";
+                    el.style.top = "";
+                }
+            }
+            
+            resizer();
+        
+        </script>
+       
+
+    </body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Triangle Editor</title>
+        
+        <style>
+            
+            body{
+                overflow: hidden;
+            }
+            
+            .noPadding{
+                padding: 0px;
+                margin: 0px;
+            }
+            
+            .circle {
+                position: absolute;
+                background: black;
+                border-radius: 50%;
+            }
+            .rect {
+                position: absolute;
+                background: red;
+            }
+            .dot{
+                background: black;
+                border-radius: 50%;
+            }
+            #motion-left, #motion-right {
+                position: absolute;
+                height: auto;
+                width: auto;
+                white-space: nowrap;
+            }
+            #mtagLeft, #mtagRight, #mic-tag{
+                position: relative;
+                top: -4px;
+                font-size: 2.5vh;
+            }
+            #motion-check-left, #motion-check-right, #mic-check {
+                width: 2.5vw;
+                height: 2.5vh;
+            }
+            
+            #microphone{
+                position: absolute;
+                padding: 0;
+                white-space: nowrap;
+            }
+            
+            
+            .arrow{
+                background: black;
+
+                width: 2vw;
+                height: 5vw;
+/*                ratio = 20 wid: 50 hi*/
+                clip-path: polygon(30% 0%, 70% 0%, 70% 50%, 100% 50%, 50% 100%, 0% 50%, 30% 50%);
+/*                transform: rotate(calc(90deg - 63.43deg));*/
+            }
+            .dualArrow{
+                background: black;
+                
+                clip-path: polygon(30% 30%, 10% 30%, 50% 0%, 90% 30%, 70% 30%,  70% 70%, 90% 70%, 50% 100%, 10% 70%, 30% 70%);
+            }
+            
+            .hide{
+                display: none;
+            }
+            
+            .floatleft{
+                float: left;
+            }
+            .floatright{
+                float: right;
+            }
+            .cf:before, .cf:after {
+              content: " ";
+              display: table;
+            }
+            .cf:after { clear: both; }
+            
+            #colorpicker{
+                position: absolute;
+                left: 13vw;
+                top: 13vh;
+                width: 75vw;
+                height: 75vh;
+
+                border: 0.2vw solid black;
+                background: white;
+                z-index: 2;
+                font-size: 3vh;
+            }
+            
+            .colorslider{
+                width: 35vw;
+/*                height: 3vh;*/
+                -webkit-appearance: none;
+                border: 1px solid black;
+            }
+            .colorslider::-webkit-slider-runnable-track{
+                background: linear-gradient(
+                to right,
+                red, yellow, green, cyan, blue, rgb(255, 0, 255), red);
+                
+                height: 0.75vh;
+            }
+            .colorslider::-moz-range-track{
+                background: linear-gradient(
+                to right,
+                red, yellow, green, cyan, blue, rgb(255, 0, 255), red);
+                
+                height: 0.75vh;
+            }
+            
+            .cslider::-webkit-slider-thumb{
+                -webkit-appearance: none;
+                border: none;
+                height: 1.4vh;
+                width: 0.5vh;
+                background: black;
+                margin-top: -0.2vh;
+            }
+            .cslider::-moz-range-thumb{
+                border: none;
+                height: 1.4vh;
+                width: 0.5vh;
+                background: black;
+                margin-top: -0.2vh;
+            }
+            
+            .monoslider{
+                -webkit-appearance: none;
+                width: 35vw;
+                border: 1px solid black;
+            }
+            .monoslider::-webkit-slider-runnable-track{
+                background: linear-gradient(
+                to right,
+                black, white);
+                
+                height: 0.75vh;
+            }
+            .monoslider::-moz-range-track{
+                background: linear-gradient(
+                to right,
+                black, white);
+                
+                height: 0.75vh;
+            }
+            
+            .rgbinput{
+                width: 4vw;
+                font-size: 2vh;
+                -moz-appearance: textfield;
+            }
+            .rgbinput::-webkit-inner-spin-button,
+            .rgbinput::-webkit-outer-spin-button{
+                -webkit-appearance: none;
+                margin: 0;
+            }
+            
+            .clear {
+                clear: both;
+            }
+            
+            .flatButton{
+                
+            }
+            
+            #innerCP{
+                position: relative;
+                width: 63vw;
+                height: 63vh;
+                left: 6vw;
+                top: 6vh; 
+            }
+            
+            .patternDot{
+                display: inline-block;
+                border: 0.2vh solid black;
+                border-radius: 50%;
+                
+                width: 3vh;
+                height: 3vh;
+                
+                margin-top: .25vh;
+                
+                cursor: pointer;
+            }
+            .patternSelector{
+                display: inline-block;
+                margin: 1vh;
+                width: 4vw;
+                height: 7.6vh;
+            }
+            .patternSelected{
+                border: 1px solid black;
+            }
+            
+            .transition{
+                display: inline-block;
+                width: 4vw;
+                
+                text-align: center;
+                
+                position: relative;
+            }
+            .transitionBox{
+                display: inline-block;
+                width: 4vw;
+                font-size: 1.5vh;
+                
+                text-align: center;
+                
+                position: relative;
+                top: -2.6vh;
+            }
+            .addPattern{
+                display: inline-block;
+                width: 4vw;
+                height: 7.6vh; 
+                top: 50%;
+                left: 50%;
+                transform: translateY(-25%);
+                
+                font-size: 6vh;
+                cursor: pointer;
+            }
+            
+            #cpmenu{
+                position: absolute;
+                
+                background: white;
+                
+                border: 0.2vw solid black;
+                
+                width: 10vw;
+                height: 4vh;
+                
+                line-height: 4vh;
+                font-size: 2.5vh;
+                
+                list-style: none;
+                text-align: center;
+                
+                z-index: 2;
+                
+                cursor: pointer;
+            }
+            
+            #addcp{
+                position: absolute;
+                
+                background: white;
+                
+                border: 0.2vw solid black;
+                
+                width: 15vw;
+                height: 8vh;
+                
+                line-height: 4vh;
+                font-size: 2.5vh;
+                
+                list-style: none;
+                text-align: center;
+                
+                z-index: 2;
+                
+                cursor: pointer;
+            }
+            
+            .cdArrow{
+                background: black;
+                width: 4vh;
+                height: 3vh;
+                clip-path: polygon(50% 0%, 85% 70%, 90% 60%, 96% 100%, 75% 90%, 80% 80%, 50% 25%, 20% 80%, 25% 90%, 4% 100%, 10% 60%, 15% 70%);
+                
+                
+            }
+            
+            
+            
+            
+            
+            
+        </style>
+    </head>
+    
+    <body style='text-align: center; font-family: Arial, sans-serif'>
+       
+        <!-- Title -->
+        <span style='font-size: 4vh'>△Contemporary Triangle Editor△</span>
+        
+        <br><br>
+        <span style="font-size: 3vh">Frame Rate: </span>
+        <input id="framerate" type='number' max="30" class='rgbinput' value="20" style="width: 2.5vw; text-align: center" onchange="changeFramerate()">
+        <span style="font-size: 3vh">&nbsp;updates per second</span>
+         
+        <div id="tri-container"></div>
+          
+       <form id='motion-left' width="20vw">
+
+           <span  id='mtagLeft'>Motion</span>
+           <input id='motion-check-left' type='checkbox' checked width="2vw" height="2vh" onclick="changeMotion('left', this.checked);">
+
+       </form>
+        
+       <form id='motion-right'>
+           <input id='motion-check-right' type='checkbox' checked onclick="changeMotion('right', this.checked);">
+           <span id='mtagRight'>Motion</span>
+       </form>
+       
+       <div id='colorpicker' class='hide cf' style='text-align: center;'>
+        
+        <button onclick="closeCP(this)">Close</button>
+        
+        <div style='border: 0.2vw solid black; width: 4vw; height: 4vh; position: absolute; color: white' id="rectId">
+        <input id="moveLED" class="rgbinput" type="number" style="position: absolute; top: 4.5vw; left: -0.2vw; width: 3.8vw; font-size: 2vh" value=1 onchange="moveCP()">
+        </div>
+        
+         <section id='innerCP'>
+          <!--    use random    use mic     -->
+            <span class='floatleft' style="font-size: 2.5vh">
+              <input id='use-random' type='checkbox' style='width: 2vh; height: 2vh;' onclick='addSecondSlider("Random")'> 
+              Use Random
+            </span>
+              
+            <span class='floatright' style="font-size: 2.5vh">
+                  Use Mic
+                  <input id='use-mic' type='checkbox' style='width: 2vh; height: 2vh;' onclick='addSecondSlider("Mic")'> 
+              </span>
+            
+            <br>
+            <span id="useSameValues" class='floatleft hide' style="font-size: 2vh;">
+              <input id='randSameValue' type='checkbox' style='width: 2vh; height: 1.5vh;' onclick='useSameLEDs(this);'> 
+              Same value for all LEDs
+            </span>
+            
+            <br><br>
+            
+            <section id="patterns" class="noPadding" style="text-align: center;">
+               
+                <h4 class="noPadding">Pattern</h4>
+                
+
+                    
+                <p class="noPadding" style="display: inline-block; font-size: 6vh; cursor: pointer;" onclick="removePatternSelector()">-</p>
+                <p class="noPadding" style="display: inline-block; font-size: 4vh; cursor: pointer;" onclick="makePatternSelector()">+</p>
+                
+                <br>
+                <section class="noPadding" id="selectors" style="display: inline-block">
+                
+                    <div class="patternSelector patternSelected" onclick="changePatternNum(this)">
+                        <input class="rgbinput psinput" type="number" style="width: 3vw; height: 2.5vh; text-align: center; font-size: 1.8vh;" value="1" onchange="setPatternFrames(this)">
+                        <div class="patternDot"></div>
+                    </div>
+                    
+                    <div class="transitionBox">
+                       <span style="cursor: pointer" onclick="changeTransType(this)">Fade</span>
+                        <input class='rgbinput transition' type='number' value=0 style='width: 3vw; height: 2.5vh; font-size: 1.8vh;' onchange="setPatternTransition(this)">
+                    </div>
+                    
+                
+                </section>
+                
+                
+                
+                
+            <br>
+            </section>
+             
+            
+              
+            <section id="monSlider" class='clear'>
+
+                  <input class="colorslider cslider floatleft" type="range" min="0" max="360" step="1" value="0" id="topColorSlider" oninput="setColor('mon')" >
+
+                  <form class='hslIn' style='font-size: 3vh;' onchange="setColorFromHSL('mon')">
+                      H <input type='number' max="360" class='rgbinput' value="0">
+                      S <input type='number' max="100" class='rgbinput' value="100">
+                      L <input type='number' max="100" class='rgbinput' value="50">
+                  </form>
+
+                   <input class="monoslider cslider floatleft" type="range" min="0" max="100" step="1" value=50 oninput="setColor('mon')" >
+                
+            </section>
+            
+            <section id="randSliders" class="clear hide">
+
+
+              <!--    random top color sliders      -->
+
+                  <span id='topSliderLow' class='floatleft' style='font-size: 2.5vh;'>Random Low </span> <br>
+
+                  <input class="colorslider cslider floatleft" type="range" min="0" max="360" step="1" value="0" oninput="setColor('rand')" >
+
+                  <form class='hslIn' style='font-size: 3vh;' onchange="setColorFromHSL('rand')">
+                      H <input type='number' max="360" class='rgbinput' value=0>
+                      S <input type='number' max="100" class='rgbinput' value=100>
+                      L <input type='number' max="100" class='rgbinput' value=50>
+                  </form>
+
+                   <input class="monoslider cslider floatleft" type="range" min="0" max="100" step="1" value="50" oninput="setColor('rand')" >
+
+
+               <br>
+
+               <!--    random bottom color sliders      -->
+
+                  <span style='font-size:2.5vh;' class='floatleft'>Random High</span> <br>
+
+                  <input class="colorslider cslider floatleft" type="range" min="0" max="360" step="1" value="0" oninput="setColor('rand')" >
+
+                  <form class='hslIn' style='font-size: 3vh; display: inline' onchange="setColorFromHSL('rand')">
+                        H <input type='number' max="360" class='rgbinput' value=0>
+                        S <input type='number' max="100" class='rgbinput' value=100>
+                        L <input type='number' max="100" class='rgbinput' value=50>
+                  </form>
+
+
+                   <input class="monoslider cslider floatleft" type="range" min="0" max="100" step="1" value="50" oninput="setColor('rand')" >
+
+                   <br><br>
+
+
+               </section>
+
+            <section id="micSliders" class="clear hide">
+
+
+            <!--    Mic top color sliders     -->
+
+              <span id='mSliderLow' class=' floatleft' style='font-size: 2.5vh;'>Mic Low </span> <br>
+
+              <input class="colorslider cslider floatleft" type="range" min="0" max="360" step="1" value="0" oninput="setColor('mic')" >
+
+              <form class='hslIn' style='font-size: 3vh;' onchange="setColorFromHSL('mic')">
+                    H <input type='number' max="360" class='rgbinput' value=0>
+                    S <input type='number' max="100" class='rgbinput' value=100>
+                    L <input type='number' max="100" class='rgbinput' value=50>
+              </form>
+
+               <input class="monoslider cslider floatleft" type="range" min="0" max="100" step="1" value="50" oninput="setColor('mic')" >
+
+            <br>
+            <!--    Mic bottom color sliders     -->
+
+              <span style='font-size:2.5vh;' class='floatleft'>Mic High</span> <br>
+
+              <input class="colorslider cslider floatleft" type="range" min="0" max="360" step="1" value="0" oninput="setColor('mic')" >
+
+              <form class='hslIn' style='font-size: 3vh; display: inline' onchange="setColorFromHSL('mic')">
+                    H <input type='number' max="360" class='rgbinput' value=0>
+                    S <input type='number' max="100" class='rgbinput' value=100>
+                    L <input type='number' max="100" class='rgbinput' value=50>
+              </form>
+
+
+               <input class="monoslider cslider floatleft" type="range" min="0" max="100" step="1" value="50" oninput="setColor('mic')" >
+
+            </section>
+              
+
+           </section>
+           
+       </div>
+       
+        <div id="cpmenu" class="hide" style="padding: 0vw;" onmouseleave="toggleElement(this, false);" onclick="deleteCP()">
+            Delete
+        </div>
+        
+        <div id="addcp" class="hide" style="padding: 0vw;" onmouseleave="toggleElement(this, false);" onclick="addCP()">
+            Add Generator
+        </div>
+        
+        <button style="position: absolute; width: 12vw; left: 44vw; bottom: 3vh; font-size: 2vh" onclick="downloadFile()">Download</button>
+        
+
+       <script src='tri2.js'></script>
+
+       
+
+    </body>
+</html>

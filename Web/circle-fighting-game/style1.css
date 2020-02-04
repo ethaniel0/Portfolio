@@ -1,0 +1,21 @@
+#gameOverText{
+    font-size: 80px;
+    text-align: center;
+    z-index: 1;   
+}
+
+canvas{
+    
+    border: 1px solid black;
+
+    width: 100vw;
+    height: 100vw;
+    
+    
+    position:absolute;
+    top:0vh;
+    left: 0vh;
+    
+    margin: auto;
+
+}
